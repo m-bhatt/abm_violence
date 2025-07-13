@@ -1,7 +1,0 @@
-jaxlib==0.3.8+cuda11.cudnn82
--f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html
-jax==0.3.8
--f https://storage.googleapis.com/jax-releases/jax_releases.html
-ml_dtypes==0.1.0
-numpy~=1.21
-scipy<1.13
