@@ -1,6 +1,14 @@
 import jax.numpy as jnp
 import jax.random as jrand
 
+param_config = {
+    "propensity_range": {"range": (-9, -5), "logscale": True},
+    "walk_radius_range": {"range": (1, 95), "logscale": False},
+    "arm_bias_range": {"range": (-3, 1), "logscale": True},
+    "arm_weight_range": {"range": (-1, 1), "logscale": True},
+    "atrisk_gather_rate_range": {"range": (-8, -4), "logscale": True}
+}
+
 class ParamDistr:
     def __init__(self, param_config):
         self.param_config = param_config
@@ -30,3 +38,8 @@ class ParamDistr:
         def uniform_prior(p):
             return jnp.all((p >= self.range_lower) & (p <= self.range_upper))+1e-3
         return uniform_prior
+    
+    def get_log_uniform_prior(self):
+        def log_uniform_prior(p):
+            return jnp.log(jnp.all((p >= self.range_lower) & (p <= self.range_upper))+1e-3)
+        return log_uniform_prior

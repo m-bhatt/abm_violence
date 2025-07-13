@@ -40,7 +40,6 @@ def mc_update(xt, Pxt, proposal_func, P, Q, rng, log=True):
     proposed = proposal_func(k1, xt)
     P_proposed = P(proposed)
     # print(f"{xt} (P=({Pxt})) -> {proposed} (P={P_proposed})")
-    #TODO check if sign of Q is correct
     if log==True:
         # log_delta = P_proposed - Pxt + Q(xt, proposed) - Q(proposed, xt)
         # print(f"Log delta: {log_delta}")

@@ -41,6 +41,7 @@ def sample_event(walk_radius, population_density, arm_density, atrisk_gathering_
     return ((access_count > 0) & weapon_access & (location_count > 0)) * jrand.uniform(subkey, (), minval=0, maxval=gathering_size)
 
 batch_sample = jax.jit(jax.vmap(sample_event, 0), device=jax.devices()[1])
+
 from stat_utils import CityParams, GeneralParams
 def conditional_sample(city_params: CityParams, general_params: GeneralParams, rng_key, num_samples=10000):
     population, population_density, arm_count, arm_density = city_params

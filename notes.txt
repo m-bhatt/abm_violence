@@ -1,2 +1,34 @@
-Papers
-Forecasting the Severity of Mass Public Shootings in the United States (Duwe, Sanders, et.al 2021)
+abm_analysis.py
+    Analyze outputs of abm ll evaluations. Heatmaps of likelihood over parameter values, bayesian estimates of shooting stats, etc. 
+abm_eval.py:
+    Script for running ll eval over product space of possible parameter values
+abm_event.py
+    sample_event: Sample outcome of a single event, returns number of deaths from a given event
+    conditional_sample: Sample batch of many events at once
+abm_ll.py
+    poisson_ll: Helper function for ll of poisson distr
+    city_ll: Calculates probability of a city's history given city parameters and general parameters. 
+    event_rate: Expected number of events w/ more then five fatalities in a given timespan
+    eval_ds: Calculate log-likelihood of events in each city given general params and list of city params
+abm_mcmc.py
+    eval_params: Eval log-likelihood of a set of params with hardcoded city data. TODO fix that
+    get_param_density_func: Take in param prior (TODO should this be log?), rng, and num_samples. 
+    Return stateless function of parameters that simply gives log-likelihood eval of parameters. 
+    Optionally include data-dict to record data from eval process, like city-level log-likelihoods. 
+city_data.py
+    Load dataset and subsampled dataset for eval. 
+county_analysis.ipynb
+    Gen city data dataset w/ city params including population, population density, gun density, etc in each county.
+    Saves to data/county_data.pkl
+forecast.ipynb
+    Gen forecasts for cities, expected mass shooting rates, etc
+
+
+
+
+
+
+TODO
+Write out documentation for every function
+Get MCMC running with city data
+Get county level data working
