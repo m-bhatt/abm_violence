@@ -11,8 +11,8 @@ abm_ll.py
     event_rate: Expected number of events w/ more then five fatalities in a given timespan
     eval_ds: Calculate log-likelihood of events in each city given general params and list of city params
 abm_mcmc.py
-    eval_params: Eval log-likelihood of a set of params with hardcoded city data. TODO fix that
-    get_param_density_func: Take in param prior (TODO should this be log?), rng, and num_samples. 
+    eval_params: Eval log-likelihood of a set of params with hardcoded city data.
+    get_param_density_func: Take in param prior, rng, and num_samples. 
     Return stateless function of parameters that simply gives log-likelihood eval of parameters. 
     Optionally include data-dict to record data from eval process, like city-level log-likelihoods. 
 city_data.py
@@ -22,13 +22,26 @@ county_analysis.ipynb
     Saves to data/county_data.pkl
 forecast.ipynb
     Gen forecasts for cities, expected mass shooting rates, etc
-
+mcmc.py
+    mcmc: Custom mcmc implementation that takes in initial params, a proposal func mapping from current state to nearby neighbor, 
+        density function, and Q func accounting for potential asymmetry in proposal func. 
+        Returns a list of samples and their estimated likelihoods. 
+param_distr.py
+    Defines a param distr class that keeps track of parameters and the prior over them. Good for sampling and getting prior distr, but
+    only for uniform and log-uniform distributions. God help you otherwise. 
+plots.ipynb
+    A bunch of very nice code from Mira plotting gun sales stores densities. Thanks Mira. 
+zip_nn.ipynb
+    Code for calculating the nearest neighbors of zip codes using lat long coords. Thanks Mira. 
 
 
 
 
 
 TODO
-Write out documentation for every function
+Fix hardcoded city data to upsample highly populated cities
 Get MCMC running with city data
 Get county level data working
+
+TODONE
+Write out documentation for every function

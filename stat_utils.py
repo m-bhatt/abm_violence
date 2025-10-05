@@ -9,30 +9,30 @@ EventOutcome = namedtuple('EventOutcome', ['date', 'fatalities', 'injured', 'tot
 def logrange(start, end, num):
     return np.exp(np.linspace(np.log(start), np.log(end), num))
 
-def sample_event(walk_radius, population_density, arm_density, population_grid, access_grid, walk_grid, rng): 
-    population_grid.fill(population_density)
-    access_count = rng.poisson(arm_density*population_grid.size)
-    if(access_count <= 0):
-        return 0
-    access_points = rng.choice(population_grid.size, access_count, p=population_grid.flatten() / population_grid.sum())
-    access_grid.fill(0)
-    access_grid.reshape((-1,))[access_points] = 1
+# def sample_event(walk_radius, population_density, arm_density, population_grid, access_grid, walk_grid, rng): 
+#     population_grid.fill(population_density)
+#     access_count = rng.poisson(arm_density*population_grid.size)
+#     if(access_count <= 0):
+#         return 0
+#     access_points = rng.choice(population_grid.size, access_count, p=population_grid.flatten() / population_grid.sum())
+#     access_grid.fill(0)
+#     access_grid.reshape((-1,))[access_points] = 1
 
-    random_walk = rng.integers(-1, 2, (walk_radius, 2))
-    random_walk = np.cumsum(random_walk, axis=0) % population_grid.shape[0]
-    weapon_access = np.any(access_grid[random_walk[:, 0], random_walk[:, 1]])
-    if(not weapon_access):
-        return 0
-    walk_grid.fill(0)
-    walk_grid[random_walk[:, 0], random_walk[:, 1]] = 1
-    atrisk_gathering_rate = 1e-6
-    population_encounters = np.sum(walk_grid*population_grid)
-    location_count = rng.poisson(population_encounters*atrisk_gathering_rate)
-    if(location_count <= 0):
-        return 0
-    loc_gathering_size = 10*rng.weibull(0.4, (location_count,))
-    gathering_size = np.max(loc_gathering_size)
-    return np.random.uniform(0, gathering_size)
+#     random_walk = rng.integers(-1, 2, (walk_radius, 2))
+#     random_walk = np.cumsum(random_walk, axis=0) % population_grid.shape[0]
+#     weapon_access = np.any(access_grid[random_walk[:, 0], random_walk[:, 1]])
+#     if(not weapon_access):
+#         return 0
+#     walk_grid.fill(0)
+#     walk_grid[random_walk[:, 0], random_walk[:, 1]] = 1
+#     atrisk_gathering_rate = 1e-6
+#     population_encounters = np.sum(walk_grid*population_grid)
+#     location_count = rng.poisson(population_encounters*atrisk_gathering_rate)
+#     if(location_count <= 0):
+#         return 0
+#     loc_gathering_size = 10*rng.weibull(0.4, (location_count,))
+#     gathering_size = np.max(loc_gathering_size)
+#     return np.random.uniform(0, gathering_size)
 
 def grenander_pdf_eval(x, knot_x, knot_slope):
     xp = np.searchsorted(knot_x, x)-1

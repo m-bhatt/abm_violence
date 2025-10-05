@@ -1,0 +1,167 @@
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(3.1832702e-08), walk_radius=np.float32(38.498447), arm_bias=np.float32(5.022374), arm_weight=np.float32(0.07260502), atrisk_gathering_rate=np.float32(3.7872804e-05))
+INFO:root:Log posterior: -960.7550048828125
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(1.547214e-07), walk_radius=np.float32(3.8551445), arm_bias=np.float32(0.07577529), arm_weight=np.float32(0.097835414), atrisk_gathering_rate=np.float32(3.7699955e-08))
+INFO:root:Log posterior: -1829.04248046875
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(2.4885754e-08), walk_radius=np.float32(56.074505), arm_bias=np.float32(6.80296e-05), arm_weight=np.float32(0.11371479), atrisk_gathering_rate=np.float32(1.28808475e-08))
+INFO:root:Log posterior: -2023.589599609375
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(2.5783915e-09), walk_radius=np.float32(11.91405), arm_bias=np.float32(0.01474493), arm_weight=np.float32(0.09683538), atrisk_gathering_rate=np.float32(4.1206235e-07))
+INFO:root:Log posterior: -2072.4921875
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(1.4277991e-08), walk_radius=np.float32(77.075836), arm_bias=np.float32(2.5687166e-05), arm_weight=np.float32(0.07657511), atrisk_gathering_rate=np.float32(1.4337127e-08))
+INFO:root:Log posterior: -2094.282958984375
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(1.1364744e-09), walk_radius=np.float32(34.21771), arm_bias=np.float32(0.00014755099), arm_weight=np.float32(0.075946845), atrisk_gathering_rate=np.float32(1.9221561e-05))
+INFO:root:Log posterior: -1731.330810546875
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(4.4866293e-09), walk_radius=np.float32(74.341934), arm_bias=np.float32(0.112280354), arm_weight=np.float32(0.07905577), atrisk_gathering_rate=np.float32(1.5354101e-06))
+INFO:root:Log posterior: -1345.78125
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(5.994348e-08), walk_radius=np.float32(13.0691595), arm_bias=np.float32(2.774035), arm_weight=np.float32(0.09351589), atrisk_gathering_rate=np.float32(3.3186425e-05))
+INFO:root:Log posterior: -979.1652221679688
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(1.9738138e-06), walk_radius=np.float32(8.498937), arm_bias=np.float32(0.00017523619), arm_weight=np.float32(0.06975548), atrisk_gathering_rate=np.float32(2.1043517e-05))
+INFO:root:Log posterior: -1069.427734375
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(2.8169986e-06), walk_radius=np.float32(50.629322), arm_bias=np.float32(4.2176292e-05), arm_weight=np.float32(0.069292285), atrisk_gathering_rate=np.float32(1.7955395e-05))
+INFO:root:Log posterior: -1680.8038330078125
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(5.2090727e-06), walk_radius=np.float32(19.750715), arm_bias=np.float32(1.1663404e-05), arm_weight=np.float32(0.079302296), atrisk_gathering_rate=np.float32(1.3243323e-08))
+INFO:root:Log posterior: -1391.5540771484375
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(2.0506886e-06), walk_radius=np.float32(47.202152), arm_bias=np.float32(0.070984684), arm_weight=np.float32(0.08383888), atrisk_gathering_rate=np.float32(2.4100706e-07))
+INFO:root:Log posterior: -976.1294555664062
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(7.741074e-09), walk_radius=np.float32(73.43006), arm_bias=np.float32(0.14903404), arm_weight=np.float32(0.08095033), atrisk_gathering_rate=np.float32(1.925148e-07))
+INFO:root:Log posterior: -1550.40966796875
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(1.011513e-09), walk_radius=np.float32(6.9739003), arm_bias=np.float32(0.05489505), arm_weight=np.float32(0.09002896), atrisk_gathering_rate=np.float32(5.4854604e-07))
+INFO:root:Log posterior: -2152.20849609375
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(2.0417804e-06), walk_radius=np.float32(48.366432), arm_bias=np.float32(0.0020275032), arm_weight=np.float32(0.07053048), atrisk_gathering_rate=np.float32(1.9175732e-05))
+INFO:root:Log posterior: -1828.83740234375
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(2.0183344e-07), walk_radius=np.float32(9.6912365), arm_bias=np.float32(0.07823307), arm_weight=np.float32(0.084629394), atrisk_gathering_rate=np.float32(1.7601307e-05))
+INFO:root:Log posterior: -977.5589599609375
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(4.7386875e-06), walk_radius=np.float32(57.443787), arm_bias=np.float32(0.24528833), arm_weight=np.float32(0.065611094), atrisk_gathering_rate=np.float32(1.7418931e-06))
+INFO:root:Log posterior: -3340.908447265625
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(1.0504123e-06), walk_radius=np.float32(47.69564), arm_bias=np.float32(0.036416695), arm_weight=np.float32(0.11740441), atrisk_gathering_rate=np.float32(6.20009e-08))
+INFO:root:Log posterior: -1147.2064208984375
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(2.471644e-09), walk_radius=np.float32(65.9205), arm_bias=np.float32(0.865154), arm_weight=np.float32(0.11353952), atrisk_gathering_rate=np.float32(3.6861918e-06))
+INFO:root:Log posterior: -1334.632080078125
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(2.1520568e-06), walk_radius=np.float32(66.862434), arm_bias=np.float32(3.3439625e-05), arm_weight=np.float32(0.106810264), atrisk_gathering_rate=np.float32(5.217216e-08))
+INFO:root:Log posterior: -1289.044921875
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(8.839708e-09), walk_radius=np.float32(38.09716), arm_bias=np.float32(0.00077161775), arm_weight=np.float32(0.07879442), atrisk_gathering_rate=np.float32(4.7537736e-08))
+INFO:root:Log posterior: -2125.97900390625
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(1.4979054e-08), walk_radius=np.float32(2.8482835), arm_bias=np.float32(0.0068780556), arm_weight=np.float32(0.10729446), atrisk_gathering_rate=np.float32(2.8118306e-05))
+INFO:root:Log posterior: -1653.7711181640625
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(1.9129968e-06), walk_radius=np.float32(40.147026), arm_bias=np.float32(0.24130088), arm_weight=np.float32(0.0769781), atrisk_gathering_rate=np.float32(1.6682064e-08))
+INFO:root:Log posterior: -1250.241455078125
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(5.056919e-07), walk_radius=np.float32(61.98684), arm_bias=np.float32(0.64532185), arm_weight=np.float32(0.09656769), atrisk_gathering_rate=np.float32(4.241955e-08))
+INFO:root:Log posterior: -1233.9063720703125
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(2.5861254e-06), walk_radius=np.float32(59.96176), arm_bias=np.float32(0.7009035), arm_weight=np.float32(0.10770408), atrisk_gathering_rate=np.float32(1.5540239e-07))
+INFO:root:Log posterior: -979.6347045898438
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(1.9870638e-09), walk_radius=np.float32(17.591415), arm_bias=np.float32(3.6072335e-05), arm_weight=np.float32(0.074648954), atrisk_gathering_rate=np.float32(6.888568e-07))
+INFO:root:Log posterior: -2240.946533203125
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(4.238797e-06), walk_radius=np.float32(82.969765), arm_bias=np.float32(0.20492686), arm_weight=np.float32(0.06415547), atrisk_gathering_rate=np.float32(2.3203675e-07))
+INFO:root:Log posterior: -1209.6363525390625
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(5.3628224e-07), walk_radius=np.float32(13.128716), arm_bias=np.float32(0.6405118), arm_weight=np.float32(0.11867852), atrisk_gathering_rate=np.float32(2.6086602e-07))
+INFO:root:Log posterior: -1254.8880615234375
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(6.658437e-07), walk_radius=np.float32(14.931189), arm_bias=np.float32(0.13960427), arm_weight=np.float32(0.06403782), atrisk_gathering_rate=np.float32(4.009459e-08))
+INFO:root:Log posterior: -1458.2767333984375
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(6.9107557e-07), walk_radius=np.float32(67.91392), arm_bias=np.float32(0.07030339), arm_weight=np.float32(0.087742336), atrisk_gathering_rate=np.float32(5.0076296e-06))
+INFO:root:Log posterior: -1848.62255859375
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(1.2450969e-06), walk_radius=np.float32(91.84927), arm_bias=np.float32(2.14707), arm_weight=np.float32(0.10923462), atrisk_gathering_rate=np.float32(6.012148e-06))
+INFO:root:Log posterior: -4151.0400390625
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(1.9798043e-07), walk_radius=np.float32(12.33723), arm_bias=np.float32(9.847837e-05), arm_weight=np.float32(0.11119464), atrisk_gathering_rate=np.float32(1.6339984e-05))
+INFO:root:Log posterior: -1237.021484375
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(2.8696934e-07), walk_radius=np.float32(42.250973), arm_bias=np.float32(1.4328346e-05), arm_weight=np.float32(0.079095736), atrisk_gathering_rate=np.float32(4.81458e-07))
+INFO:root:Log posterior: -1421.8768310546875
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(8.7753556e-08), walk_radius=np.float32(88.356514), arm_bias=np.float32(4.490106e-05), arm_weight=np.float32(0.09029425), atrisk_gathering_rate=np.float32(2.9627105e-07))
+INFO:root:Log posterior: -1453.0321044921875
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(9.1283555e-06), walk_radius=np.float32(82.01522), arm_bias=np.float32(0.0042925477), arm_weight=np.float32(0.1258661), atrisk_gathering_rate=np.float32(1.1382897e-06))
+INFO:root:Log posterior: -2504.9248046875
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(4.6609183e-09), walk_radius=np.float32(53.25222), arm_bias=np.float32(0.00022763266), arm_weight=np.float32(0.09792505), atrisk_gathering_rate=np.float32(5.6203127e-05))
+INFO:root:Log posterior: -1336.9302978515625
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(1.3957076e-06), walk_radius=np.float32(26.677387), arm_bias=np.float32(0.00060415966), arm_weight=np.float32(0.066189095), atrisk_gathering_rate=np.float32(1.391462e-07))
+INFO:root:Log posterior: -1419.3287353515625
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(2.3469267e-09), walk_radius=np.float32(47.94818), arm_bias=np.float32(0.1778617), arm_weight=np.float32(0.106011845), atrisk_gathering_rate=np.float32(1.7302819e-08))
+INFO:root:Log posterior: -2129.341796875
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(2.2899393e-08), walk_radius=np.float32(28.088146), arm_bias=np.float32(4.2247586e-05), arm_weight=np.float32(0.081047826), atrisk_gathering_rate=np.float32(1.5749987e-07))
+INFO:root:Log posterior: -1954.90966796875
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(3.451411e-07), walk_radius=np.float32(84.03045), arm_bias=np.float32(0.0053585875), arm_weight=np.float32(0.10568165), atrisk_gathering_rate=np.float32(3.8374363e-08))
+INFO:root:Log posterior: -1380.0753173828125
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(3.8007165e-06), walk_radius=np.float32(15.343905), arm_bias=np.float32(0.00014210425), arm_weight=np.float32(0.067910835), atrisk_gathering_rate=np.float32(1.7326786e-07))
+INFO:root:Log posterior: -1362.44384765625
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(1.6204724e-07), walk_radius=np.float32(93.871445), arm_bias=np.float32(0.5757159), arm_weight=np.float32(0.08205983), atrisk_gathering_rate=np.float32(2.0108714e-06))
+INFO:root:Log posterior: -981.3306274414062
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(3.1133803e-07), walk_radius=np.float32(78.33636), arm_bias=np.float32(0.26224712), arm_weight=np.float32(0.09349475), atrisk_gathering_rate=np.float32(4.75042e-06))
+INFO:root:Log posterior: -1281.7005615234375
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(9.630975e-07), walk_radius=np.float32(13.515542), arm_bias=np.float32(0.00015948969), arm_weight=np.float32(0.10152552), atrisk_gathering_rate=np.float32(2.521752e-05))
+INFO:root:Log posterior: -1042.8297119140625
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(4.3355982e-08), walk_radius=np.float32(93.10969), arm_bias=np.float32(0.00019789295), arm_weight=np.float32(0.08414139), atrisk_gathering_rate=np.float32(3.266568e-07))
+INFO:root:Log posterior: -1507.3306884765625
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(5.2623996e-06), walk_radius=np.float32(27.82558), arm_bias=np.float32(0.0066795116), arm_weight=np.float32(0.07180755), atrisk_gathering_rate=np.float32(1.2163679e-06))
+INFO:root:Log posterior: -1006.097900390625
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(2.6891578e-06), walk_radius=np.float32(29.57971), arm_bias=np.float32(0.7324069), arm_weight=np.float32(0.11841138), atrisk_gathering_rate=np.float32(1.9580838e-08))
+INFO:root:Log posterior: -1245.0057373046875
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(1.0609582e-06), walk_radius=np.float32(25.002283), arm_bias=np.float32(0.00011271084), arm_weight=np.float32(0.09557332), atrisk_gathering_rate=np.float32(6.643706e-06))
+INFO:root:Log posterior: -1049.8450927734375
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(3.793532e-08), walk_radius=np.float32(4.6823287), arm_bias=np.float32(2.8328733), arm_weight=np.float32(0.10452593), atrisk_gathering_rate=np.float32(1.2208636e-07))
+INFO:root:Log posterior: -1898.01171875
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(9.7152856e-08), walk_radius=np.float32(3.6125224), arm_bias=np.float32(0.0010856672), arm_weight=np.float32(0.09052332), atrisk_gathering_rate=np.float32(1.1719101e-06))
+INFO:root:Log posterior: -1844.855224609375
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(6.8036203e-09), walk_radius=np.float32(74.01425), arm_bias=np.float32(0.000621116), arm_weight=np.float32(0.09421565), atrisk_gathering_rate=np.float32(1.2192393e-07))
+INFO:root:Log posterior: -1900.22119140625
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(5.019626e-08), walk_radius=np.float32(20.506374), arm_bias=np.float32(0.06281259), arm_weight=np.float32(0.084659405), atrisk_gathering_rate=np.float32(1.1600311e-08))
+INFO:root:Log posterior: -1870.7701416015625
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(1.2961652e-09), walk_radius=np.float32(45.286625), arm_bias=np.float32(0.00012570579), arm_weight=np.float32(0.09451757), atrisk_gathering_rate=np.float32(4.293061e-07))
+INFO:root:Log posterior: -2122.122802734375
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(4.146475e-07), walk_radius=np.float32(90.52515), arm_bias=np.float32(0.014873627), arm_weight=np.float32(0.10869599), atrisk_gathering_rate=np.float32(1.0284048e-05))
+INFO:root:Log posterior: -1736.958740234375
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(4.865912e-06), walk_radius=np.float32(21.11768), arm_bias=np.float32(0.9203686), arm_weight=np.float32(0.11793862), atrisk_gathering_rate=np.float32(3.7243632e-07))
+INFO:root:Log posterior: -992.7798461914062
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(1.799967e-08), walk_radius=np.float32(90.49138), arm_bias=np.float32(0.058317233), arm_weight=np.float32(0.08207349), atrisk_gathering_rate=np.float32(1.4699767e-05))
+INFO:root:Log posterior: -964.1282958984375
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(1.651563e-08), walk_radius=np.float32(17.582314), arm_bias=np.float32(0.018357677), arm_weight=np.float32(0.09329613), atrisk_gathering_rate=np.float32(2.0090285e-05))
+INFO:root:Log posterior: -1201.681884765625
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(6.731456e-08), walk_radius=np.float32(77.57114), arm_bias=np.float32(0.0007377958), arm_weight=np.float32(0.093888074), atrisk_gathering_rate=np.float32(6.821673e-08))
+INFO:root:Log posterior: -1663.536376953125
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(3.4816384e-08), walk_radius=np.float32(81.608734), arm_bias=np.float32(0.00019766473), arm_weight=np.float32(0.110426135), atrisk_gathering_rate=np.float32(1.3535875e-07))
+INFO:root:Log posterior: -1656.83154296875
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(1.3739098e-09), walk_radius=np.float32(11.33385), arm_bias=np.float32(0.29872888), arm_weight=np.float32(0.0756173), atrisk_gathering_rate=np.float32(4.1360154e-06))
+INFO:root:Log posterior: -1710.8446044921875
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(6.2631943e-07), walk_radius=np.float32(33.441135), arm_bias=np.float32(0.0070715407), arm_weight=np.float32(0.08339308), atrisk_gathering_rate=np.float32(6.157379e-05))
+INFO:root:Log posterior: -1579.22021484375
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(1.9045629e-08), walk_radius=np.float32(18.232367), arm_bias=np.float32(0.001561554), arm_weight=np.float32(0.10019701), atrisk_gathering_rate=np.float32(6.1581563e-06))
+INFO:root:Log posterior: -1514.6202392578125
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(4.968546e-06), walk_radius=np.float32(83.88492), arm_bias=np.float32(0.00053693657), arm_weight=np.float32(0.086407), atrisk_gathering_rate=np.float32(9.751609e-06))
+INFO:root:Log posterior: -3922.187744140625
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(4.6360597e-06), walk_radius=np.float32(32.693512), arm_bias=np.float32(0.004641395), arm_weight=np.float32(0.117447406), atrisk_gathering_rate=np.float32(2.716036e-07))
+INFO:root:Log posterior: -1037.1356201171875
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(8.357021e-08), walk_radius=np.float32(86.02339), arm_bias=np.float32(0.65081763), arm_weight=np.float32(0.07464989), atrisk_gathering_rate=np.float32(1.9914977e-07))
+INFO:root:Log posterior: -1207.444091796875
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(2.5812762e-08), walk_radius=np.float32(86.79742), arm_bias=np.float32(9.85377), arm_weight=np.float32(0.10769643), atrisk_gathering_rate=np.float32(8.6557543e-07))
+INFO:root:Log posterior: -1170.056884765625
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(1.098234e-09), walk_radius=np.float32(66.56388), arm_bias=np.float32(0.0021685385), arm_weight=np.float32(0.09770031), atrisk_gathering_rate=np.float32(2.6716273e-06))
+INFO:root:Log posterior: -1706.9210205078125
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(8.38162e-08), walk_radius=np.float32(89.772415), arm_bias=np.float32(1.3768218e-05), arm_weight=np.float32(0.1031905), atrisk_gathering_rate=np.float32(4.3587255e-07))
+INFO:root:Log posterior: -1388.8233642578125
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(7.164098e-07), walk_radius=np.float32(64.47065), arm_bias=np.float32(1.1519354e-05), arm_weight=np.float32(0.0768425), atrisk_gathering_rate=np.float32(5.7064543e-08))
+INFO:root:Log posterior: -1460.0794677734375
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(4.655276e-09), walk_radius=np.float32(69.47681), arm_bias=np.float32(0.0002737209), arm_weight=np.float32(0.0875833), atrisk_gathering_rate=np.float32(9.726484e-08))
+INFO:root:Log posterior: -2037.4534912109375
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(2.0937999e-07), walk_radius=np.float32(68.73393), arm_bias=np.float32(0.00096927845), arm_weight=np.float32(0.09569873), atrisk_gathering_rate=np.float32(1.9925938e-05))
+INFO:root:Log posterior: -1015.1355590820312
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(2.381754e-09), walk_radius=np.float32(67.80304), arm_bias=np.float32(0.0008686998), arm_weight=np.float32(0.068674415), atrisk_gathering_rate=np.float32(1.5227077e-06))
+INFO:root:Log posterior: -1751.8321533203125
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(8.0361735e-09), walk_radius=np.float32(78.20801), arm_bias=np.float32(1.8087352e-05), arm_weight=np.float32(0.0675454), atrisk_gathering_rate=np.float32(1.2133452e-06))
+INFO:root:Log posterior: -1650.00341796875
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(2.2686491e-07), walk_radius=np.float32(69.609344), arm_bias=np.float32(0.00035938868), arm_weight=np.float32(0.1128569), atrisk_gathering_rate=np.float32(6.494848e-05))
+INFO:root:Log posterior: -1191.6746826171875
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(9.9119106e-08), walk_radius=np.float32(72.48995), arm_bias=np.float32(0.014095812), arm_weight=np.float32(0.066197276), atrisk_gathering_rate=np.float32(2.0157934e-07))
+INFO:root:Log posterior: -1289.7232666015625
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(2.2384452e-09), walk_radius=np.float32(93.954636), arm_bias=np.float32(0.00023667658), arm_weight=np.float32(0.09789716), atrisk_gathering_rate=np.float32(1.3720833e-07))
+INFO:root:Log posterior: -2008.3243408203125
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(4.1018936e-07), walk_radius=np.float32(20.77776), arm_bias=np.float32(0.5147785), arm_weight=np.float32(0.068115115), atrisk_gathering_rate=np.float32(3.807165e-05))
+INFO:root:Log posterior: -1573.723388671875
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(2.2997813e-06), walk_radius=np.float32(64.80789), arm_bias=np.float32(2.537977e-05), arm_weight=np.float32(0.07287367), atrisk_gathering_rate=np.float32(2.7380822e-05))
+INFO:root:Log posterior: -2268.15625
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(3.0753713e-09), walk_radius=np.float32(15.657617), arm_bias=np.float32(0.018366227), arm_weight=np.float32(0.07625233), atrisk_gathering_rate=np.float32(7.732194e-08))
+INFO:root:Log posterior: -2188.3193359375
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(2.0102664e-07), walk_radius=np.float32(36.02221), arm_bias=np.float32(6.972036e-05), arm_weight=np.float32(0.091296926), atrisk_gathering_rate=np.float32(3.5322344e-07))
+INFO:root:Log posterior: -1516.0557861328125
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(8.670956e-07), walk_radius=np.float32(10.659012), arm_bias=np.float32(0.05292726), arm_weight=np.float32(0.0852998), atrisk_gathering_rate=np.float32(4.2096644e-07))
+INFO:root:Log posterior: -1181.6016845703125
+INFO:root:Evaluating params: GeneralParams(propensity=np.float32(8.494742e-09), walk_radius=np.float32(3.8600466), arm_bias=np.float32(1.219369), arm_weight=np.float32(0.07905385), atrisk_gathering_rate=np.float32(5.3010785e-06))
+INFO:root:Log posterior: -1659.1893310546875
+WARNING:root:Reshaping x0 to row vector.
+INFO:VBMC:Beginning variational optimization assuming EXACT observations of the log-joint.
+INFO:VBMC: Iteration  f-count    Mean[ELBO]    Std[ELBO]    sKL-iter[q]   K[q]  Convergence  Action

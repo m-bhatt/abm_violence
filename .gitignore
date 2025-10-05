@@ -1,4 +1,6 @@
 /data
 /images
 /__pycache__
+/models
+/proc
 /.ipynb_checkpoints

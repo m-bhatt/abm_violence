@@ -4,8 +4,8 @@ import jax.random as jrand
 param_config = {
     "propensity_range": {"range": (-9, -5), "logscale": True},
     "walk_radius_range": {"range": (1, 95), "logscale": False},
-    "arm_bias_range": {"range": (-3, 1), "logscale": True},
-    "arm_weight_range": {"range": (-1, 1), "logscale": True},
+    "arm_bias_range": {"range": (-5, 3), "logscale": True},
+    "arm_weight_range": {"range": (-1.2, -0.9), "logscale": True},
     "atrisk_gather_rate_range": {"range": (-8, -4), "logscale": True}
 }
 
@@ -23,9 +23,9 @@ class ParamDistr:
         return jrand.uniform(key, shape=(self.param_count,)) * (self.range_upper - self.range_lower) + self.range_lower
     
     def transform_sample(self, sample):
-        return jnp.where(self.logscale, jnp.exp(sample), sample)
+        return jnp.where(self.logscale, jnp.exp(sample*jnp.log(10)), sample)
     def inverse_transform_sample(self, sample):
-        return jnp.where(self.logscale, jnp.log(sample), sample)
+        return jnp.where(self.logscale, jnp.log(sample) / jnp.log(10), sample)
     def get_gaussian_proposal(self):
         return lambda key, params : params + jrand.normal(key, shape=(self.param_count,))*self.range_width*0.05
     
@@ -34,12 +34,15 @@ class ParamDistr:
             return -jnp.sum((p1 - p2)**2 / (2 * (0.05 * self.range_width)**2))
         return log_gaussian_proposal_pdf
     
+    #Prior on untransformed parameters
     def get_uniform_prior(self):
+        space_volume = 1 #jnp.prod(self.range_width)
         def uniform_prior(p):
-            return jnp.all((p >= self.range_lower) & (p <= self.range_upper))+1e-3
+            return jnp.all((p >= self.range_lower) & (p <= self.range_upper)) / space_volume + 1e-6
         return uniform_prior
     
     def get_log_uniform_prior(self):
+        space_volume = 1 #jnp.prod(self.range_width)
         def log_uniform_prior(p):
-            return jnp.log(jnp.all((p >= self.range_lower) & (p <= self.range_upper))+1e-3)
+            return jnp.log(jnp.all((p >= self.range_lower) & (p <= self.range_upper)) / space_volume + 1e-6)
         return log_uniform_prior
