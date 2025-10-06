@@ -33,13 +33,13 @@ def event_rate(city_params, general_params, timespan, event_distr):
     return propensity*timespan*population*prob_event
 
 # cl = city_ll(c_params, c_events, params, 50, city_distr)
-def eval_ds(city_data, general_params, timespan, rng_key, num_samples=10000):
+def eval_ds(city_data, general_params, timespan, rng_key, num_samples=10000, sample_func=conditional_sample):
     ll_data = []
     for c in city_data:
         rng_key, subkey = jrand.split(rng_key, 2)
         c_params = c['params']
         c_events = c['events']
-        event_sim = conditional_sample(c_params, general_params, subkey, num_samples=num_samples)
+        event_sim = sample_func(c_params, general_params, subkey, num_samples=num_samples)
         city_distr = grenander_pdf(event_sim+1)
         ll, pll, eventll = city_ll(c_params, c_events, general_params, timespan, city_distr)
         ll_data.append([ll, pll, eventll])

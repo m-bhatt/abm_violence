@@ -74,7 +74,7 @@ def get_param_density_func_noisy(param_prior, rngkey, num_samples, data_dict=Non
         nonlocal rngkey
         prior = param_prior(params)
         if prior < 0: #For uniform prior, prior < 0 indicates -inf, so return -2e3
-            return -1000, 100
+            return -1000, 3
         rngkey, subkey = jrand.split(rngkey)
         params = param_distr.transform_sample(params)
         params = GeneralParams(*np.array(params))
