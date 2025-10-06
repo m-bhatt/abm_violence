@@ -3,8 +3,8 @@ import jax.random as jrand
 import pickle
 from stat_utils import grenander_pdf, GeneralParams
 import jax.random as jrand
-from abm_event import conditional_sample
-from abm_ll import city_ll
+from gvabm.abm_event import conditional_sample
+from gvabm.abm_ll import city_ll
 import math
 
 def mcmc(params, proposal_func, P, Q, rng, num_iter=10000, log=False, callback=None):

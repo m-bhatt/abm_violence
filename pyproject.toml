@@ -1,0 +1,19 @@
+[project]
+name = "gv-abm"
+version = "0.1.0"
+description = "A short description of my package."
+authors = [
+    { name = "Andrew Dickson", email = "NA@gmail.com" },
+]
+readme = "README.md"
+requires-python = ">=3.8"
+license = "MIT AND (Apache-2.0 OR BSD-2-Clause)"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+]
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"

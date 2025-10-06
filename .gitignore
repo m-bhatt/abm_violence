@@ -4,3 +4,5 @@
 /models
 /proc
 /.ipynb_checkpoints
+gvabm.egg-info/
+gv_abm/__pycache__/

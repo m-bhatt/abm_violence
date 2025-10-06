@@ -6,11 +6,11 @@ import jax
 import jax.numpy as jnp
 import jax.random as jrand
 
-from abm_event import sample_event, conditional_sample
-from abm_ll import city_ll, eval_ds
-from stat_utils import CityParams, EventOutcome, GeneralParams, logrange
-from city_data import subsampled_city_data, subsample_weights
-from param_distr import ParamDistr
+from gvabm.abm_event import sample_event, conditional_sample
+from gvabm.abm_ll import city_ll, eval_ds
+from gvabm.stat_utils import CityParams, EventOutcome, GeneralParams, logrange
+from gvabm.city_data import subsampled_city_data, subsample_weights
+from gvabm.param_distr import ParamDistr
 
 import logging
 #set log file location and level

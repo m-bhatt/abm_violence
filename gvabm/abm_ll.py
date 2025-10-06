@@ -10,8 +10,8 @@ def poisson_ll(n, mu):
             return -np.inf
     return n*np.log(mu)-mu-gammaln(n+1)
 
-from stat_utils import grenander_pdf
-from abm_event import conditional_sample
+from gvabm.stat_utils import grenander_pdf
+from gvabm.abm_event import conditional_sample
 
 def city_ll(city_params, event_list, general_params, timespan, event_distr):
     population, population_density, arm_count, arm_density = city_params

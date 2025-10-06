@@ -1,0 +1,15 @@
+Metadata-Version: 2.4
+Name: gv-abm
+Version: 0.1.0
+Summary: A short description of my package.
+Author-email: Andrew Dickson <NA@gmail.com>
+License-Expression: MIT AND (Apache-2.0 OR BSD-2-Clause)
+Classifier: Programming Language :: Python :: 3
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Dynamic: license-file
+
+# abm_violence
+repo for the abm gun violence project

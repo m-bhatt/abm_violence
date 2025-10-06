@@ -6,15 +6,16 @@ import jax
 import jax.numpy as jnp
 import jax.random as jrand
 
-from abm_event import sample_event, conditional_sample
-from abm_ll import city_ll, eval_ds
-from stat_utils import CityParams, EventOutcome, GeneralParams, logrange
-from param_distr import ParamDistr, param_config
+from gvabm.abm_event import sample_event, conditional_sample
+from gvabm.abm_ll import city_ll, eval_ds
+from gvabm.stat_utils import CityParams, EventOutcome, GeneralParams, logrange
+from gvabm.param_distr import ParamDistr, param_config
 param_distr = ParamDistr(param_config)
 
 prior = param_distr.get_uniform_prior()
 log_prior = param_distr.get_log_uniform_prior()
-from abm_mcmc import get_param_density_func_noisy
+
+from gvabm.abm_mcmc import get_param_density_func_noisy
 
 data_dict = {}
 P = get_param_density_func_noisy(param_distr.get_log_uniform_prior(), jrand.PRNGKey(1), int(1e5), data_dict=data_dict)

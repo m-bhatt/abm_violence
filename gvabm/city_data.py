@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-with open('data/county_data.pkl', 'rb') as f:
+with open('/home/andrew/abm_violence/data/county_data.pkl', 'rb') as f:
     city_data = pickle.load(f)
 def hasna(p):
     return any(np.isnan(x) for x in p)
