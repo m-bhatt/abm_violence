@@ -8,9 +8,9 @@ import jax.random as jrand
 
 from gvabm.abm_event import sample_event, conditional_sample
 from gvabm.abm_ll import city_ll, eval_ds
-from gvabm.stat_utils import CityParams, EventOutcome, GeneralParams, logrange
+from gvabm.stat_utils import logrange
 from gvabm.city_data import subsampled_city_data, subsample_weights
-from gvabm.param_distr import ParamDistr
+from gvabm.param_distr import ParamDistr, CityParams, EventOutcome, GeneralParams
 
 import logging
 #set log file location and level
@@ -67,7 +67,7 @@ def get_param_density_func(param_prior, rngkey, num_samples, data_dict=None):
         return max(res, -1000) #VBMC expects a tuple of (value, noise)
     return param_density_func
 
-def get_param_density_func_noisy(param_prior, rngkey, num_samples, data_dict=None):
+def get_param_density_func_noisy(param_prior, rngkey, num_samples):
     def param_density_func(params):
         # print("Evaluating params:", params)
         params = jnp.array(params)
