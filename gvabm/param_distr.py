@@ -6,9 +6,14 @@ from collections import namedtuple
 
 GeneralParams = namedtuple('GeneralParams', ['propensity', 'walk_radius', 'arm_bias', 'arm_weight', 'atrisk_gathering_rate'])
 MixedGeneralParams = namedtuple('MixedGeneralParams', ['propensity', 'walk_radius', 'arm_bias', 'arm_weight', 'atrisk_gathering_rate', 'mix_perc'])
+BigGeneralParams = namedtuple('BigGeneralParams', ['propensity', 'walk_radius', 'arm_bias', 'arm_weight', 
+                                                   'atrisk_gathering_rate', 'mix_perc', 'scale_factor', 'decay_rate'])
+#Create dtype of union of GeneralParams types
+from typing import Union
+ParamsType = Union[GeneralParams, MixedGeneralParams, BigGeneralParams]
 
-CityParams = namedtuple('CityParams', ['population', 'population_density', 'arm_count', 'arm_density'])
-EventOutcome = namedtuple('EventOutcome', ['date', 'fatalities', 'injured', 'total_victims'])
+CityParams = namedtuple('CityParams', ['year', 'population', 'population_density', 'arm_count', 'arm_density'])
+EventOutcome = namedtuple('EventOutcome', ['year', 'fatalities', 'injured', 'total_victims', 'population', 'population_density'])
 
 class ParamDistr:
     def __init__(self, param_config):
@@ -29,6 +34,10 @@ class ParamDistr:
 
     def sample_range(self, key):
         return jrand.uniform(key, shape=(self.param_count,))
+    
+    def expand_range(self, sample):
+        sample = self.range_lower + sample * self.range_width
+        return sample
     
     #Go from [0,1] normalized to actual parameter space
     def transform_sample(self, sample):
@@ -108,4 +117,18 @@ mixed_choice_param_config = {
                     "mix_perc" : {"range": (-0.05, 1.05), "logscale": False, 'clip': (0.0, 1.0)}, 
                     },
     "data_wrapper": MixedGeneralParams
+}
+
+big_param_config = {
+    "entry_labels": ['propensity', 'walk_radius', 'arm_bias', 'arm_weight', 'atrisk_gathering_rate', 'mix_perc', 'scale_factor', 'decay_rate'],
+    "entry_ranges": {"propensity": {"range": (-9, -4), "logscale": True},
+                    "walk_radius": {"range": (5, 95), "logscale": False},
+                    "arm_bias": {"range": (-5, 2), "logscale": True},
+                    "arm_weight": {"range": (-5, 2), "logscale": True},
+                    "atrisk_gathering_rate": {"range": (-8, -2), "logscale": True},
+                    "mix_perc" : {"range": (-0.05, 1.05), "logscale": False, 'clip': (0.0, 1.0)}, 
+                    "scale_factor": {"range": (0, 1), "logscale": True},
+                    "decay_rate": {"range": (-1.5, 1.5), "logscale": True},
+                    },
+    "data_wrapper": BigGeneralParams
 }

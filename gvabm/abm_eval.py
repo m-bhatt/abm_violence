@@ -39,7 +39,7 @@ for i, group in tqdm(enumerate(param_groups)):
         continue
     rng_key, subkey = jrand.split(rng_key, 2)
     params = GeneralParams(*group)
-    eval_ds_results = eval_ds(subsampled_city_data, params, 50, subkey, num_samples=int(1e5))
+    eval_ds_results = eval_ds(subsampled_city_data, params, 10, subkey, num_samples=int(1e5))
     weighted_likelihood = (subsample_weights.reshape((-1, 1))*eval_ds_results).sum(axis=0)
     print(f"{params}: {weighted_likelihood}")
     eval_dict[params] = eval_ds_results

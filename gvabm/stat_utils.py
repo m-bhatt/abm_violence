@@ -246,22 +246,22 @@ class GrenanderDistrNumba:
         """Evaluate PDF at x (scalar or array)."""
         x = np.asarray(x, dtype=np.float64)
         if x.ndim == 0:
-            return grenander_pdf_eval_numba(x, self.knot_x, self.knot_slope)
+            return grenander_pdf_eval_numba(x, self.knot_x, self.knot_slope) + 1e-10
         else:
-            return grenander_pdf_eval_numba_vec(x, self.knot_x, self.knot_slope)
+            return grenander_pdf_eval_numba_vec(x, self.knot_x, self.knot_slope) + 1e-10
     
     def cdf(self, x):
         """Evaluate CDF at x (scalar or array)."""
         x = np.asarray(x, dtype=np.float64)
         if x.ndim == 0:
-            return grenander_cdf_eval_numba(x, self.knot_x, self.knot_slope)
+            return grenander_cdf_eval_numba(x, self.knot_x, self.knot_slope) 
         else:
             return grenander_cdf_eval_numba_vec(x, self.knot_x, self.knot_slope)
 
 
 class HybridDistribution:
-    def __init__(self, base_distr, tail_distr, threshold):
-        # self.zero_prob = zero_prob
+    def __init__(self, base_distr, tail_distr, threshold, zero_prob=0.0):
+        self.zero_prob = zero_prob
         self.base_distr = base_distr #P(x)
         self.tail_distr = tail_distr #P(x | x >= threshold)
         self.threshold = threshold
@@ -271,18 +271,23 @@ class HybridDistribution:
     def pdf(self, x):
         base_pdf = self.base_distr.pdf(x)
         tail_pdf = (1-self.base_cdf_thres)*self.tail_distr.pdf(x)
-        return np.where(x < self.threshold, base_pdf, tail_pdf)
+        return np.where(x < self.threshold, base_pdf, tail_pdf) * (1 - self.zero_prob)
         
     def cdf(self, x):
         base_cdf = self.base_distr.cdf(x)
         tail_cdf = self.base_cdf_thres + (1 - self.base_cdf_thres)*self.tail_distr.cdf(x)
-        return np.where(x < self.threshold, base_cdf, tail_cdf)
+        return np.where(x < self.threshold, base_cdf, tail_cdf)*(1 - self.zero_prob) + self.zero_prob
+    
+from scipy.stats import gaussian_kde
+def kde_pdf(data, bandwidth=1.0):
+    kde = gaussian_kde(data, bw_method=bandwidth / np.std(data, ddof=1))
+    return kde
 
 from scipy.stats import genpareto
 def hybrid_pdf(data):
-    # zero_prob = np.mean(data == 0)
-    # data = data[data > 0]
-    base_distr = grenander_pdf_numba(data)
+    zero_prob = np.mean(data == 0)
+    data = data[data > 0] #remove zeros for kde fitting
+    base_distr = kde_pdf(data[data<10])
     tail_data = data[data > 1]
     partition_index = max(len(tail_data) - 500, 0)
     threshold = np.sort(tail_data)[partition_index]
@@ -293,3 +298,19 @@ def hybrid_pdf(data):
     fitted_shape, fitted_loc, fitted_scale = genpareto.fit(tail_data)
     tail_distr = genpareto(c=fitted_shape, loc=fitted_loc, scale=fitted_scale)
     return HybridDistribution(base_distr, tail_distr, threshold)
+
+# from scipy.stats import genpareto
+# def hybrid_pdf(data):
+#     # zero_prob = np.mean(data == 0)
+#     # data = data[data > 0]
+#     base_distr = grenander_pdf_numba(data)
+#     tail_data = data[data > 1]
+#     partition_index = max(len(tail_data) - 500, 0)
+#     threshold = np.sort(tail_data)[partition_index]
+#     tail_data = tail_data[tail_data >= threshold]
+#     print(threshold, len(tail_data))
+#     if len(tail_data) < 5:
+#         return base_distr
+#     fitted_shape, fitted_loc, fitted_scale = genpareto.fit(tail_data)
+#     tail_distr = genpareto(c=fitted_shape, loc=fitted_loc, scale=fitted_scale)
+#     return HybridDistribution(base_distr, tail_distr, threshold)
