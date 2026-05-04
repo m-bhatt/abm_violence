@@ -4,6 +4,39 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 data_dir = '/home/andrew/abm_violence/data'
+
+_PROXY_FILES = {
+    'ffl':     'subsampled_city_data.pkl',
+    'suicide': 'subsampled_city_data_suicide_proxy.pkl',
+    'rand':    'subsampled_city_data_rand_proxy.pkl',
+}
+
+def load_subsampled_data(proxy: str = 'ffl') -> dict:
+    """
+    Load the subsampled city dataset.
+
+    Parameters
+    ----------
+    proxy : 'ffl' (default) or 'suicide'
+        'ffl'     — FFL density as arm_density (original dataset)
+        'suicide' — state-year firearm suicide fraction as arm_density
+                    (built by scripts/build_suicide_proxy_data.py)
+
+    Returns
+    -------
+    dict with keys: subsampled_city_data, subsampled_city_names,
+                    subsample_weights, city_data
+    """
+    if proxy not in _PROXY_FILES:
+        raise ValueError(f"proxy must be one of {list(_PROXY_FILES)}; got {proxy!r}")
+    fname = f'{data_dir}/processed/{_PROXY_FILES[proxy]}'
+    with open(fname, 'rb') as f:
+        return pickle.load(f)
+    # Build scripts:
+    #   suicide — scripts/build_suicide_proxy_data.py  (CDC WISQARS)
+    #   rand    — scripts/build_rand_proxy_data.py     (RAND TL-354)
+
+# Default load (FFL proxy) — keeps all existing import behaviour unchanged
 with open(f'{data_dir}/processed/subsampled_city_data.pkl', 'rb') as f:
     subsampled_data = pickle.load(f)
 

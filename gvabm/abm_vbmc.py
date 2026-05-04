@@ -9,12 +9,22 @@ import jax.random as jrand
 
 from gvabm.abm_event import sample_event, conditional_sample
 from gvabm.abm_ll import city_ll, eval_ds
-from gvabm.city_data import subsampled_city_data, subsample_weights
+from gvabm.city_data import subsampled_city_data as _default_city_data
+from gvabm.city_data import subsample_weights as _default_weights
 from gvabm.stat_utils import logrange
 from gvabm.param_distr import ParamDistr, param_config, CityParams, EventOutcome, GeneralParams, MixedGeneralParams
 
 #Sample func recieves inputs normalized to [0,1] range. Outputs log-likelihood
-def get_param_density_func_noisy(sample_func, param_distr, log_prior, rngkey, num_samples, cutoff_likelihood=-1100, likelihood_offset=650, logdir=None):
+def get_param_density_func_noisy(sample_func, param_distr, log_prior, rngkey, num_samples,
+                                  cutoff_likelihood=-1100, likelihood_offset=650, logdir=None,
+                                  subsampled_city_data=None, subsample_weights=None):
+    # Accept explicit data so callers can swap in the suicide-proxy dataset.
+    # Falls back to the module-level FFL dataset for backward compatibility.
+    if subsampled_city_data is None:
+        subsampled_city_data = _default_city_data
+    if subsample_weights is None:
+        subsample_weights = _default_weights
+
     if logdir is not None:
         logging.basicConfig(filename=f'{logdir}/density_eval.log', level=logging.INFO)
         logger = logging.getLogger()
@@ -49,7 +59,13 @@ def get_param_density_func_noisy(sample_func, param_distr, log_prior, rngkey, nu
         return float(res + likelihood_offset), 1.5 #VBMC expects a tuple of (value, noise)
     return param_density_func
 
-def get_param_density_func(sample_func, param_distr, log_prior, rngkey, num_samples):
+def get_param_density_func(sample_func, param_distr, log_prior, rngkey, num_samples,
+                            subsampled_city_data=None, subsample_weights=None):
+    if subsampled_city_data is None:
+        subsampled_city_data = _default_city_data
+    if subsample_weights is None:
+        subsample_weights = _default_weights
+
     def param_density_func(params):
         nonlocal rngkey
         params = jnp.array(params)
@@ -59,7 +75,7 @@ def get_param_density_func(sample_func, param_distr, log_prior, rngkey, num_samp
         city_eval = eval_ds(subsampled_city_data, params, 10, subkey, num_samples=num_samples, sample_func=sample_func)
         total_eval = (subsample_weights.reshape((-1, 1))*city_eval).sum(axis=0)[0]
         res = total_eval + log_prior(params)
-        if jnp.isinf(res): 
+        if jnp.isinf(res):
             #return negative infinity
             return -np.inf
         return float(res)

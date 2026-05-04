@@ -126,9 +126,61 @@ big_param_config = {
                     "arm_bias": {"range": (-5, 2), "logscale": True},
                     "arm_weight": {"range": (-5, 2), "logscale": True},
                     "atrisk_gathering_rate": {"range": (-8, -2), "logscale": True},
-                    "mix_perc" : {"range": (-0.05, 1.05), "logscale": False, 'clip': (0.0, 1.0)}, 
+                    "mix_perc" : {"range": (-0.05, 1.05), "logscale": False, 'clip': (0.0, 1.0)},
                     "scale_factor": {"range": (0, 1), "logscale": True},
                     "decay_rate": {"range": (-1.5, 1.5), "logscale": True},
                     },
     "data_wrapper": BigGeneralParams
+}
+
+# Suicide-proxy variants: arm_density is now firearm_suicide_fraction ∈ (0, 1).
+# Typical range across US states: 0.30–0.65 (vs. FFL density 0.01–0.08).
+# arm_weight prior is shifted down by ~log10(0.5/0.04) ≈ 1.1 log units to keep
+# the effective arm signal arm_density * arm_weight + arm_bias in the same range.
+suicide_proxy_param_config = {
+    "entry_labels": ['propensity', 'walk_radius', 'arm_bias', 'arm_weight', 'atrisk_gathering_rate'],
+    "entry_ranges": {"propensity": {"range": (-9, -4), "logscale": True},
+                    "walk_radius": {"range": (5, 95), "logscale": False},
+                    "arm_bias":   {"range": (-5, 2),  "logscale": True},
+                    "arm_weight": {"range": (-6, 2),  "logscale": True},  # shifted left vs FFL config
+                    "atrisk_gathering_rate": {"range": (-8, -2), "logscale": True},
+                    },
+    "data_wrapper": GeneralParams
+}
+
+suicide_proxy_mixed_param_config = {
+    "entry_labels": ['propensity', 'walk_radius', 'arm_bias', 'arm_weight', 'atrisk_gathering_rate', 'mix_perc'],
+    "entry_ranges": {"propensity": {"range": (-9, -4), "logscale": True},
+                    "walk_radius": {"range": (5, 95), "logscale": False},
+                    "arm_bias":   {"range": (-5, 2),  "logscale": True},
+                    "arm_weight": {"range": (-6, 2),  "logscale": True},
+                    "atrisk_gathering_rate": {"range": (-8, -2), "logscale": True},
+                    "mix_perc":   {"range": (-0.05, 1.05), "logscale": False, 'clip': (0.0, 1.0)},
+                    },
+    "data_wrapper": MixedGeneralParams
+}
+
+# RAND household firearm rate proxy: HFR ∈ [0.034, 0.800], mean ≈ 0.44.
+# Same scale as suicide fraction proxy, so uses the same shifted arm prior.
+rand_proxy_param_config = {
+    "entry_labels": ['propensity', 'walk_radius', 'arm_bias', 'arm_weight', 'atrisk_gathering_rate'],
+    "entry_ranges": {"propensity": {"range": (-9, -4), "logscale": True},
+                    "walk_radius": {"range": (5, 95), "logscale": False},
+                    "arm_bias":   {"range": (-5, 2),  "logscale": True},
+                    "arm_weight": {"range": (-6, 2),  "logscale": True},
+                    "atrisk_gathering_rate": {"range": (-8, -2), "logscale": True},
+                    },
+    "data_wrapper": GeneralParams
+}
+
+rand_proxy_mixed_param_config = {
+    "entry_labels": ['propensity', 'walk_radius', 'arm_bias', 'arm_weight', 'atrisk_gathering_rate', 'mix_perc'],
+    "entry_ranges": {"propensity": {"range": (-9, -4), "logscale": True},
+                    "walk_radius": {"range": (5, 95), "logscale": False},
+                    "arm_bias":   {"range": (-5, 2),  "logscale": True},
+                    "arm_weight": {"range": (-6, 2),  "logscale": True},
+                    "atrisk_gathering_rate": {"range": (-8, -2), "logscale": True},
+                    "mix_perc":   {"range": (-0.05, 1.05), "logscale": False, 'clip': (0.0, 1.0)},
+                    },
+    "data_wrapper": MixedGeneralParams
 }

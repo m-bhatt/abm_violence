@@ -1,0 +1,47 @@
+Experiments to rerun / add for revision
+========================================
+
+A) FIREARM SHARE OF SUICIDES AS ALTERNATIVE PROXY
+   - Replace FFL density with firearm share of suicides (available historically 1982-2024)
+   - Source: CDC WISQARS or state-level firearm suicide fraction estimates
+   - Run full VBMC calibration on all three models; report WAIC alongside FFL-based results
+   - Primary response to Reviewer 1, Comment 4
+
+B) HIGH-FIREARM AVAILABILITY SENSITIVITY (WAIC SWEEP)
+   - Vary the high-weapon encounter probability (currently fixed at 0.10)
+   - Suggested sweep: 0.05, 0.10, 0.15, 0.20, 0.25, 0.30
+   - Run VBMC calibration and compute WAIC at each value; plot WAIC vs. encounter probability
+   - Determines how sensitive model fit is to this unjustified assumption (Reviewer 2)
+
+C) GRID RESOLUTION SENSITIVITY
+   - Re-run simulation under alternative grid sizes: 20x20, 25x25, 35x35, 40x40
+   - Hold all other parameters at posterior means; compare WAIC and posterior parameter distributions
+   - Directly addresses Reviewer 2's question about whether 30x30 was selected post-hoc
+
+D) FFL DENSITY BUFFER RADIUS SENSITIVITY
+   - Currently: 15-mile radius around sub-county centroid for computing FFL density
+   - Test: 7.5, 30 miles
+   - Report effect on WAIC and on the magnitude/rank of the FFL coefficient
+   - Addresses Reviewer 2's "access-radius definitions" concern
+
+E) SIMULATION ACCESS RADIUS SENSITIVITY
+   - The agent walk distance is inferred; separately vary the scale at which FFLs are placed within
+     the 30x30 grid (alpha, beta prior ranges) to check robustness of firearm acquisition probability estimates
+   - Compare posterior distributions across prior specifications
+
+F) SEVERITY MODEL SENSITIVITY
+   - Vary the exponential decay rate for low- and high-lethality weapons
+   - Test at least +/-50% of the current hard-coded values
+   - Confirm that WAIC ranking of models is stable across severity parametrizations
+   - Addresses Reviewer 2's "severity mechanisms" concern
+
+G) GATHERING SIZE DISTRIBUTION SENSITIVITY
+   - Weibull parameters for at-risk gathering size are currently tuned manually
+   - Sweep key Weibull shape/scale parameters; verify that severity distribution and WAIC are
+     not dominated by this assumed prior
+   - Include as supplementary figure
+
+H) CITY-LEVEL RISK PREDICTIONS (TOP 500 CITIES)
+   - Implement the commented-out city-level predictions using posterior samples
+   - Report top-10 highest-risk cities by (i) event probability/decade and (ii) fatalities/capita/decade
+   - Include a map or ranked table as a figure; directly answers Reviewer 1, Comment 3
