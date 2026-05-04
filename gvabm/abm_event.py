@@ -5,24 +5,36 @@ from jax.scipy.signal import convolve2d
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Sensitivity sweep factory (Tasks B and C)
+# Sensitivity sweep factory (Tasks B, C, F, G)
 # ──────────────────────────────────────────────────────────────────────────────
 
-def make_noopt_event(high_weapon_prob: float = 0.10, grid_size: int = 30):
+def make_noopt_event(
+    high_weapon_prob: float = 0.10,
+    grid_size: int = 30,
+    low_rate: float = 6.0,
+    high_rate_add: float = 120.0,
+    weibull_shape: float = 2.0,
+    weibull_scale: float = 0.4,
+):
     """
     Factory: return a nooptstate event sampler with configurable sensitivity params.
 
     Parameters
     ----------
     high_weapon_prob : float
-        Per-encounter probability that a weapon roll yields a high-lethality
-        weapon: ``p = 1 - exp(-high_weapon_prob * weapon_rolls)``.
-        Baseline is 0.10 (matches sample_event_optstate_noopt).
+        Per-encounter probability for a high-lethality weapon.
+        Baseline 0.10 (Task B sweep).
     grid_size : int
-        Side length N of the N×N spatial grid.  Baseline is 30.
-        walk_radius is in grid steps, so the same step count covers a larger
-        physical fraction of a smaller grid.  total_lambda = arm_density * N²
-        (consistent with the baseline formula).
+        Side length N of the N×N spatial grid.  Baseline 30 (Task C sweep).
+    low_rate : float
+        Exponential fatality rate when no high weapon.  Baseline 6 (Task F).
+    high_rate_add : float
+        Additional rate increment when high weapon present; total = low_rate +
+        high_rate_add.  Baseline 120 (Task F).
+    weibull_shape : float
+        Shape parameter for at-risk gathering-size Weibull.  Baseline 2 (Task G).
+    weibull_scale : float
+        Scale parameter for at-risk gathering-size Weibull.  Baseline 0.4 (Task G).
 
     Returns
     -------
@@ -67,11 +79,11 @@ def make_noopt_event(high_weapon_prob: float = 0.10, grid_size: int = 30):
         rng_key, subkey = jrand.split(rng_key)
         max_location = 250
         location_mask = jnp.arange(max_location + 5) < location_count
-        loc_gathering_size = jrand.weibull_min(subkey, 2, 0.4, (max_location + 5,))
+        loc_gathering_size = jrand.weibull_min(subkey, weibull_shape, weibull_scale, (max_location + 5,))
         gathering_size = loc_gathering_size[max_location]
 
         rng_key, subkey = jrand.split(rng_key)
-        expon_lambda = 6 + 120 * high_weapon_access
+        expon_lambda = low_rate + high_rate_add * high_weapon_access
         rng_key, subkey = jrand.split(rng_key)
         fatalities = jnp.remainder(jrand.exponential(subkey, shape=()) * expon_lambda, gathering_size)
         return (weapon_access & (location_count > 0)) * fatalities
