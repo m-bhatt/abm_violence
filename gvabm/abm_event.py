@@ -3,478 +3,81 @@ import jax.numpy as jnp
 import jax.random as jrand
 from jax.scipy.signal import convolve2d
 
-def sample_event_optstate(walk_radius, population_density, arm_density, atrisk_gathering_rate, mix_perc, rng_key):
-    rng_key, subkey = jrand.split(rng_key)
 
-    pgrid = (jrand.uniform(rng_key, (30, 30)) > 0.95).astype(jnp.float32)
-    #Use jax to convolve population_grid with a 7x7 gaussian kernel to create pgrid
-    kernel = jnp.arange(-4, 5)
-    kernel = jnp.exp(-0.5 * (kernel / 2.5) ** 2)
-    kernel = kernel / jnp.sum(kernel)
-    kernel = jnp.outer(kernel, kernel)
-    pgrid = convolve2d(pgrid, kernel, mode='same')
-    pgrid = pgrid / jnp.max(pgrid)
-    population_grid = pgrid * population_density
+# ──────────────────────────────────────────────────────────────────────────────
+# Sensitivity sweep factory (Tasks B and C)
+# ──────────────────────────────────────────────────────────────────────────────
+
+def make_noopt_event(high_weapon_prob: float = 0.10, grid_size: int = 30):
+    """
+    Factory: return a nooptstate event sampler with configurable sensitivity params.
+
+    Parameters
+    ----------
+    high_weapon_prob : float
+        Per-encounter probability that a weapon roll yields a high-lethality
+        weapon: ``p = 1 - exp(-high_weapon_prob * weapon_rolls)``.
+        Baseline is 0.10 (matches sample_event_optstate_noopt).
+    grid_size : int
+        Side length N of the N×N spatial grid.  Baseline is 30.
+        walk_radius is in grid steps, so the same step count covers a larger
+        physical fraction of a smaller grid.  total_lambda = arm_density * N²
+        (consistent with the baseline formula).
+
+    Returns
+    -------
+    Callable with the same signature as sample_event_optstate_noopt.
+    """
+    def _sample(walk_radius, population_density, arm_density, atrisk_gathering_rate, rng_key):
+        rng_key, subkey = jrand.split(rng_key)
+        pgrid = (jrand.uniform(rng_key, (grid_size, grid_size)) > 0.95).astype(jnp.float32)
+        kernel = jnp.arange(-4, 5)
+        kernel = jnp.exp(-0.5 * (kernel / 2.5) ** 2)
+        kernel = kernel / jnp.sum(kernel)
+        kernel = jnp.outer(kernel, kernel)
+        pgrid = convolve2d(pgrid, kernel, mode='same')
+        pgrid = pgrid / jnp.max(pgrid)
+        population_grid = pgrid * population_density
+
+        flat_pop_grid = population_grid.flatten()
+        probabilities = flat_pop_grid / jnp.sum(flat_pop_grid)
+        rng_key, subkey = jrand.split(rng_key)
+        max_access = 1
+        access_points = jrand.choice(subkey, population_grid.size, (max_access + 1,), p=probabilities)
+
+        total_lambda = arm_density * population_grid.size
+        access_grid = pgrid / pgrid.sum() * total_lambda
+        access_grid = jrand.poisson(subkey, lam=access_grid)
+
+        rng_key, subkey = jrand.split(rng_key)
+        start_pos_r, start_pos_c = jnp.unravel_index(access_points[-1], population_grid.shape)
+        random_walk = jrand.randint(subkey, (100, 2), -1, 2)
+        random_walk = (jnp.cumsum(random_walk, axis=0) + jnp.array([start_pos_r, start_pos_c])) % population_grid.shape[0]
+        walk_mask = jnp.arange(100) < walk_radius
+
+        weapon_rolls = jnp.sum(access_grid[random_walk[:, 0], random_walk[:, 1]] * walk_mask)
+        weapon_access = weapon_rolls > 0
+        rng_key, subkey = jrand.split(rng_key)
+        high_weapon_access = jrand.bernoulli(subkey, p=1 - jnp.exp(-high_weapon_prob * weapon_rolls))
+
+        population_encounters = jnp.sum(population_grid[random_walk[:, 0], random_walk[:, 1]] * walk_mask)
+        rng_key, s1, s2 = jrand.split(rng_key, 3)
+        location_count = jrand.poisson(s1, lam=population_encounters * atrisk_gathering_rate + 1)
+
+        rng_key, subkey = jrand.split(rng_key)
+        max_location = 250
+        location_mask = jnp.arange(max_location + 5) < location_count
+        loc_gathering_size = jrand.weibull_min(subkey, 2, 0.4, (max_location + 5,))
+        gathering_size = loc_gathering_size[max_location]
+
+        rng_key, subkey = jrand.split(rng_key)
+        expon_lambda = 6 + 120 * high_weapon_access
+        rng_key, subkey = jrand.split(rng_key)
+        fatalities = jnp.remainder(jrand.exponential(subkey, shape=()) * expon_lambda, gathering_size)
+        return (weapon_access & (location_count > 0)) * fatalities
+
+    return _sample
 
-    flat_pop_grid = population_grid.flatten()
-    probabilities = flat_pop_grid / jnp.sum(flat_pop_grid)
-
-    rng_key, subkey = jrand.split(rng_key)
-
-    max_access = 1
-    access_points = jrand.choice(subkey, population_grid.size, (max_access+1,), p=probabilities)
-    
-    total_lambda = arm_density * population_grid.size
-    access_grid = pgrid / pgrid.sum() * total_lambda
-    access_grid = jrand.poisson(subkey, lam=access_grid)
-
-    rng_key, subkey = jrand.split(rng_key)
-    start_pos_r, start_pos_c = jnp.unravel_index(access_points[-1], population_grid.shape)
-    random_walk = jrand.randint(subkey, (100, 2), -1, 2)
-    random_walk = (jnp.cumsum(random_walk, axis=0) + jnp.array([start_pos_r, start_pos_c])) % population_grid.shape[0]
-    walk_mask = jnp.arange(100) < walk_radius
-
-    weapon_rolls = jnp.sum(access_grid[random_walk[:, 0], random_walk[:, 1]]*walk_mask)
-    weapon_access = (weapon_rolls > 0)
-    rng_key, subkey = jrand.split(rng_key)
-    high_weapon_access = jrand.bernoulli(subkey, p=1 - jnp.exp(-0.1 * weapon_rolls)) #Assume each weapon has a 10% chance of being high powered
-
-    population_encounters = jnp.sum(population_grid[random_walk[:, 0], random_walk[:, 1]]*walk_mask)
-
-    rng_key, s1, s2 = jrand.split(rng_key, 3)
-    location_count = jrand.poisson(s1, lam=population_encounters * atrisk_gathering_rate + 1)
-    # base_location_count = jrand.poisson(s2, lam=(population_grid[start_pos_r, start_pos_c] * atrisk_gathering_rate + 1))
-
-    rng_key, subkey = jrand.split(rng_key)
-    max_location = 250
-    location_mask = jnp.arange(max_location+5) < location_count
-    loc_gathering_size = jrand.weibull_min(subkey, 2, 0.4, (max_location+5,))
-    max_gathering_size = jnp.max(loc_gathering_size*location_mask, initial=0)
-
-    base_gathering_size = loc_gathering_size[max_location]
-    base_weapon_access = access_grid[start_pos_r, start_pos_c] > 0
-
-    rng_key, subkey = jrand.split(rng_key)
-    base_high_weapon_access = jrand.bernoulli(subkey, p=1 - jnp.exp(-0.1)) & base_weapon_access
-
-    rng_key, subkey = jrand.split(rng_key)
-    opt_state = jrand.bernoulli(subkey, p=mix_perc)
-
-    gathering_size = jnp.where(opt_state, max_gathering_size, base_gathering_size)
-    weapon_access = jnp.where(opt_state, weapon_access, base_weapon_access)
-    high_weapon_access = jnp.where(opt_state, high_weapon_access, base_high_weapon_access)
-    # location_count = jnp.where(opt_state, location_count, base_location_count)
-    
-    expon_lambda = 6 + 120 * high_weapon_access
-    rng_key, subkey = jrand.split(rng_key)
-    fatalities = jnp.remainder(jrand.exponential(subkey, shape=()) * expon_lambda, gathering_size)
-    return (weapon_access & (location_count > 0)) * fatalities #, opt_state, location_count, gathering_size, weapon_access, high_weapon_access, base_high_weapon_access
-
-def sample_event_optstate_noopt(walk_radius, population_density, arm_density, atrisk_gathering_rate, rng_key):
-    rng_key, subkey = jrand.split(rng_key)
-
-    pgrid = (jrand.uniform(rng_key, (30, 30)) > 0.95).astype(jnp.float32)
-    #Use jax to convolve population_grid with a 7x7 gaussian kernel to create pgrid
-    kernel = jnp.arange(-4, 5)
-    kernel = jnp.exp(-0.5 * (kernel / 2.5) ** 2)
-    kernel = kernel / jnp.sum(kernel)
-    kernel = jnp.outer(kernel, kernel)
-    pgrid = convolve2d(pgrid, kernel, mode='same')
-    pgrid = pgrid / jnp.max(pgrid)
-    population_grid = pgrid * population_density
-
-    flat_pop_grid = population_grid.flatten()
-    probabilities = flat_pop_grid / jnp.sum(flat_pop_grid)
-
-    rng_key, subkey = jrand.split(rng_key)
-    max_access = 1
-    access_points = jrand.choice(subkey, population_grid.size, (max_access+1,), p=probabilities)
-    
-    total_lambda = arm_density * population_grid.size
-    access_grid = pgrid / pgrid.sum() * total_lambda
-    access_grid = jrand.poisson(subkey, lam=access_grid)
-
-    rng_key, subkey = jrand.split(rng_key)
-    start_pos_r, start_pos_c = jnp.unravel_index(access_points[-1], population_grid.shape)
-    random_walk = jrand.randint(subkey, (100, 2), -1, 2)
-    random_walk = (jnp.cumsum(random_walk, axis=0) + jnp.array([start_pos_r, start_pos_c])) % population_grid.shape[0]
-    walk_mask = jnp.arange(100) < walk_radius
-
-    weapon_rolls = jnp.sum(access_grid[random_walk[:, 0], random_walk[:, 1]]*walk_mask)
-    weapon_access = (weapon_rolls > 0)
-    rng_key, subkey = jrand.split(rng_key)
-    high_weapon_access = jrand.bernoulli(subkey, p=1 - jnp.exp(-0.1 * weapon_rolls)) #Assume each weapon has a 10% chance of being high powered
-
-    population_encounters = jnp.sum(population_grid[random_walk[:, 0], random_walk[:, 1]]*walk_mask)
-
-    rng_key, s1, s2 = jrand.split(rng_key, 3)
-    location_count = jrand.poisson(s1, lam=population_encounters * atrisk_gathering_rate + 1)
-
-    rng_key, subkey = jrand.split(rng_key)
-    max_location = 250
-    location_mask = jnp.arange(max_location+5) < location_count
-    loc_gathering_size = jrand.weibull_min(subkey, 2, 0.4, (max_location+5,))
-
-    gathering_size = loc_gathering_size[max_location]
-
-    rng_key, subkey = jrand.split(rng_key)
-    expon_lambda = 6 + 120 * high_weapon_access
-    rng_key, subkey = jrand.split(rng_key)
-    fatalities = jnp.remainder(jrand.exponential(subkey, shape=()) * expon_lambda, gathering_size)
-    return (weapon_access & (location_count > 0)) * fatalities #, opt_state, location_count, gathering_size, weapon_access, high_weapon_access, base_high_weapon_access
-
-
-def sample_event_with_meta_optstate_noopt(walk_radius, population_density, arm_density, atrisk_gathering_rate, rng_key):
-    rng_key, subkey = jrand.split(rng_key)
-
-    pgrid = (jrand.uniform(rng_key, (30, 30)) > 0.95).astype(jnp.float32)
-    #Use jax to convolve population_grid with a 7x7 gaussian kernel to create pgrid
-    kernel = jnp.arange(-4, 5)
-    kernel = jnp.exp(-0.5 * (kernel / 2.5) ** 2)
-    kernel = kernel / jnp.sum(kernel)
-    kernel = jnp.outer(kernel, kernel)
-    pgrid = convolve2d(pgrid, kernel, mode='same')
-    pgrid = pgrid / jnp.max(pgrid)
-    population_grid = pgrid * population_density
-
-    flat_pop_grid = population_grid.flatten()
-    probabilities = flat_pop_grid / jnp.sum(flat_pop_grid)
-
-    rng_key, subkey = jrand.split(rng_key)
-    max_access = 1
-    access_points = jrand.choice(subkey, population_grid.size, (max_access+1,), p=probabilities)
-    
-    total_lambda = arm_density * population_grid.size
-    access_grid = pgrid / pgrid.sum() * total_lambda
-    access_grid = jrand.poisson(subkey, lam=access_grid)
-
-    rng_key, subkey = jrand.split(rng_key)
-    start_pos_r, start_pos_c = jnp.unravel_index(access_points[-1], population_grid.shape)
-    random_walk = jrand.randint(subkey, (100, 2), -1, 2)
-    random_walk = (jnp.cumsum(random_walk, axis=0) + jnp.array([start_pos_r, start_pos_c])) % population_grid.shape[0]
-    walk_mask = jnp.arange(100) < walk_radius
-
-    weapon_rolls = jnp.sum(access_grid[random_walk[:, 0], random_walk[:, 1]]*walk_mask)
-    weapon_access = (weapon_rolls > 0)
-    rng_key, subkey = jrand.split(rng_key)
-    high_weapon_access = jrand.bernoulli(subkey, p=1 - jnp.exp(-0.1 * weapon_rolls)) #Assume each weapon has a 10% chance of being high powered
-
-    population_encounters = jnp.sum(population_grid[random_walk[:, 0], random_walk[:, 1]]*walk_mask)
-
-    rng_key, s1, s2 = jrand.split(rng_key, 3)
-    location_count = jrand.poisson(s1, lam=population_encounters * atrisk_gathering_rate + 1)
-
-    rng_key, subkey = jrand.split(rng_key)
-    max_location = 250
-    location_mask = jnp.arange(max_location+5) < location_count
-    loc_gathering_size = jrand.weibull_min(subkey, 2, 0.4, (max_location+5,))
-
-    gathering_size = loc_gathering_size[max_location]
-
-    rng_key, subkey = jrand.split(rng_key)
-    expon_lambda = 6 + 120 * high_weapon_access
-    rng_key, subkey = jrand.split(rng_key)
-    fatalities = jnp.remainder(jrand.exponential(subkey, shape=()) * expon_lambda, gathering_size)
-    return (weapon_access & (location_count > 0)) * fatalities, location_count, gathering_size, weapon_access, high_weapon_access, weapon_rolls
-
-
-#Walking agent, no gathering size optimization, no variation between weapons
-def sample_event_base(walk_radius, population_density, arm_density, atrisk_gathering_rate, rng_key):
-    rng_key, subkey = jrand.split(rng_key)
-    pgrid = (jrand.uniform(rng_key, (30, 30)) > 0.95).astype(jnp.float32)
-    #Use jax to convolve population_grid with a 7x7 gaussian kernel to create pgrid
-    kernel = jnp.arange(-4, 5)
-    kernel = jnp.exp(-0.5 * (kernel / 2.5) ** 2)
-    kernel = kernel / jnp.sum(kernel)
-    kernel = jnp.outer(kernel, kernel)
-    pgrid = convolve2d(pgrid, kernel, mode='same')
-    pgrid = pgrid / jnp.max(pgrid)
-    population_grid = pgrid * population_density
-
-    flat_pop_grid = population_grid.flatten()
-    probabilities = flat_pop_grid / jnp.sum(flat_pop_grid)
-
-    rng_key, subkey = jrand.split(rng_key)
-    max_access = 1
-    access_points = jrand.choice(subkey, population_grid.size, (max_access+1,), p=probabilities)
-
-    total_lambda = arm_density * population_grid.size
-    access_grid = pgrid / pgrid.sum() * total_lambda
-    access_grid = jrand.poisson(subkey, lam=access_grid)
-
-    rng_key, subkey = jrand.split(rng_key)
-    start_pos_r, start_pos_c = jnp.unravel_index(access_points[-1], population_grid.shape)
-    random_walk = jrand.randint(subkey, (100, 2), -1, 2)
-    random_walk = (jnp.cumsum(random_walk, axis=0) + jnp.array([start_pos_r, start_pos_c])) % population_grid.shape[0]
-    walk_mask = jnp.arange(100) < walk_radius
-    weapon_rolls = jnp.sum(access_grid[random_walk[:, 0], random_walk[:, 1]]*walk_mask)
-    weapon_access = (weapon_rolls > 0)
-
-    population_encounters = jnp.sum(population_grid[random_walk[:, 0], random_walk[:, 1]]*walk_mask)
-
-    rng_key, s1 = jrand.split(rng_key, 2)
-    location_count = jrand.poisson(s1, lam=population_encounters * atrisk_gathering_rate + 1)
-
-    rng_key, subkey = jrand.split(rng_key)
-    max_location = 250
-    loc_gathering_size = jrand.weibull_min(subkey, 2, 0.4, (max_location+5,))
-    gathering_size = loc_gathering_size[max_location]
-
-    expon_lambda = 120
-    rng_key, subkey = jrand.split(rng_key)
-    fatalities = jnp.remainder(jrand.exponential(subkey, shape=()) * expon_lambda, gathering_size)
-    return (weapon_access & (location_count > 0)) * fatalities #, opt_state, location_count, gathering_size, weapon_access, high_weapon_access, base_high_weapon_access
-
-
-def sample_event_intervention(walk_radius, population_density, arm_density, atrisk_gathering_rate, mix_perc, rng_key):
-    rng_key, subkey = jrand.split(rng_key)
-
-    pgrid = (jrand.uniform(rng_key, (30, 30)) > 0.95).astype(jnp.float32)
-    #Use jax to convolve population_grid with a 7x7 gaussian kernel to create pgrid
-    kernel = jnp.arange(-4, 5)
-    kernel = jnp.exp(-0.5 * (kernel / 2.5) ** 2)
-    kernel = kernel / jnp.sum(kernel)
-    kernel = jnp.outer(kernel, kernel)
-    pgrid = convolve2d(pgrid, kernel, mode='same')
-    pgrid = pgrid / jnp.max(pgrid)
-    population_grid = pgrid * population_density
-
-    flat_pop_grid = population_grid.flatten()
-    probabilities = flat_pop_grid / jnp.sum(flat_pop_grid)
-
-    rng_key, subkey = jrand.split(rng_key)
-
-    max_access = 1
-    access_points = jrand.choice(subkey, population_grid.size, (max_access+1,), p=probabilities)
-
-    total_lambda = arm_density * population_grid.size
-    access_grid = pgrid / pgrid.sum() * total_lambda
-    access_grid = jrand.poisson(subkey, lam=access_grid)
-
-    rng_key, subkey = jrand.split(rng_key)
-    start_pos_r, start_pos_c = jnp.unravel_index(access_points[-1], population_grid.shape)
-    random_walk = jrand.randint(subkey, (100, 2), -1, 2)
-    random_walk = (jnp.cumsum(random_walk, axis=0) + jnp.array([start_pos_r, start_pos_c])) % population_grid.shape[0]
-    walk_mask = jnp.arange(100) < walk_radius
-
-    weapon_rolls = jnp.sum(access_grid[random_walk[:, 0], random_walk[:, 1]]*walk_mask)
-    weapon_access = (weapon_rolls > 0)
-    rng_key, subkey = jrand.split(rng_key)
-    high_weapon_access = jrand.bernoulli(subkey, p=1 - jnp.exp(-0.1 * weapon_rolls)) #Assume each weapon has a 10% chance of being high powered
-
-    population_encounters = jnp.sum(population_grid[random_walk[:, 0], random_walk[:, 1]]*walk_mask)
-
-    rng_key, s1, s2 = jrand.split(rng_key, 3)
-    location_count = jrand.poisson(s1, lam=population_encounters * atrisk_gathering_rate) + 1
-    base_location_count = jrand.poisson(s2, lam=population_grid[start_pos_r, start_pos_c] * atrisk_gathering_rate) + 1
-
-    rng_key, subkey = jrand.split(rng_key)
-    max_location = 250
-    location_mask = jnp.arange(max_location+5) < location_count
-    loc_gathering_size = jrand.weibull_min(subkey, 2, 0.4, (max_location+5,))
-    max_gathering_size = jnp.max(loc_gathering_size*location_mask, initial=0)
-
-    base_gathering_size = loc_gathering_size[max_location]
-    base_weapon_access = access_grid[start_pos_r, start_pos_c] > 0
-
-    rng_key, subkey = jrand.split(rng_key)
-    base_high_weapon_access = jrand.bernoulli(subkey, p=1 - jnp.exp(-0.1)) & base_weapon_access
-
-    rng_key, subkey = jrand.split(rng_key)
-    opt_state = jrand.bernoulli(subkey, p=mix_perc)
-
-    gathering_size = jnp.where(opt_state, max_gathering_size, base_gathering_size)
-    weapon_access = jnp.where(opt_state, weapon_access, base_weapon_access)
-    high_weapon_access = jnp.where(opt_state, high_weapon_access, base_high_weapon_access)
-    location_count = jnp.where(opt_state, location_count, base_location_count)
-
-    # binomial_lambda = 12 + 80*high_weapon_access
-    # rng_key, subkey = jrand.split(rng_key)
-    # fatalities = jrand.binomial(subkey, n=location_count.astype(jnp.int32) + (location_count==0), p=binomial_lambda / (binomial_lambda + location_count), shape=())
-
-    expon_lambda = 6 + 120 * high_weapon_access
-    rng_key, subkey = jrand.split(rng_key)
-    fatalities = jnp.remainder(jrand.exponential(subkey, shape=()) * expon_lambda, gathering_size)
-    return (weapon_access & (location_count > 0)) * fatalities#, opt_state, location_count, gathering_size, weapon_access, high_weapon_access, base_high_weapon_access
-
-def sample_event(walk_radius, population_density, arm_density, atrisk_gathering_rate, rng_key):
-    rng_key, subkey = jrand.split(rng_key)
-    population_grid = jnp.full((30, 30), population_density)
-    access_count = jrand.poisson(subkey, lam=arm_density * population_grid.size)
-    flat_pop_grid = population_grid.flatten()
-    probabilities = flat_pop_grid / jnp.sum(flat_pop_grid)
-    rng_key, subkey = jrand.split(rng_key)
-
-    max_access = 250
-    access_points = jrand.choice(subkey, population_grid.size, (max_access,), p=probabilities)
-    point_mask = jnp.arange(max_access) < access_count
-    access_grid = jnp.zeros_like(population_grid)
-    access_grid = access_grid.at[jnp.unravel_index(access_points, population_grid.shape)].set(point_mask)
-
-    rng_key, subkey = jrand.split(rng_key)
-    random_walk = jrand.randint(subkey, (100, 2), -1, 2)
-    random_walk = jnp.cumsum(random_walk, axis=0) % population_grid.shape[0]
-    walk_mask = jnp.arange(100) < walk_radius
-    
-    weapon_access = jnp.any(access_grid[random_walk[:, 0], random_walk[:, 1]]*walk_mask)
-
-    walk_grid = jnp.zeros_like(population_grid)
-    walk_grid = walk_grid.at[random_walk[:, 0], random_walk[:, 1]].set(walk_mask)
-    population_encounters = jnp.sum(walk_grid * population_grid)
-    rng_key, subkey = jrand.split(rng_key)
-
-    max_location = 250
-    location_count = jrand.poisson(subkey, lam=population_encounters * atrisk_gathering_rate)
-    location_mask = jnp.arange(max_location) < location_count
-    rng_key, subkey = jrand.split(rng_key)
-    loc_gathering_size = jrand.weibull_min(subkey, 2, 0.4, (max_location,))
-    gathering_size = jnp.max(loc_gathering_size*location_mask, initial=0)
-    rng_key, subkey = jrand.split(rng_key)
-    return ((access_count > 0) & weapon_access & (location_count > 0)) * jrand.uniform(subkey, (), minval=0, maxval=gathering_size)
-
-def sample_event_with_meta(walk_radius, population_density, arm_density, atrisk_gathering_rate, rng_key):
-    rng_key, subkey = jrand.split(rng_key)
-    population_grid = jnp.full((30, 30), population_density)
-    access_count = jrand.poisson(subkey, lam=arm_density * population_grid.size)
-    flat_pop_grid = population_grid.flatten()
-    probabilities = flat_pop_grid / jnp.sum(flat_pop_grid)
-    rng_key, subkey = jrand.split(rng_key)
-
-    max_access = 250
-    access_points = jrand.choice(subkey, population_grid.size, (max_access,), p=probabilities)
-    point_mask = jnp.arange(max_access) < access_count
-    access_grid = jnp.zeros_like(population_grid)
-    access_grid = access_grid.at[jnp.unravel_index(access_points, population_grid.shape)].set(point_mask)
-
-    rng_key, subkey = jrand.split(rng_key)
-    random_walk = jrand.randint(subkey, (100, 2), -1, 2)
-    random_walk = jnp.cumsum(random_walk, axis=0) % population_grid.shape[0]
-    walk_mask = jnp.arange(100) < walk_radius
-    
-    weapon_access = jnp.any(access_grid[random_walk[:, 0], random_walk[:, 1]]*walk_mask)
-
-    walk_grid = jnp.zeros_like(population_grid)
-    walk_grid = walk_grid.at[random_walk[:, 0], random_walk[:, 1]].set(walk_mask)
-    population_encounters = jnp.sum(walk_grid * population_grid)
-    rng_key, subkey = jrand.split(rng_key)
-
-    max_location = 250
-    location_count = jrand.poisson(subkey, lam=population_encounters * atrisk_gathering_rate)
-    location_mask = jnp.arange(max_location) < location_count
-    rng_key, subkey = jrand.split(rng_key)
-    loc_gathering_size = jrand.weibull_min(subkey, 2, 0.4, (max_location,))
-    gathering_size = jnp.max(loc_gathering_size*location_mask, initial=0)
-    rng_key, subkey = jrand.split(rng_key)
-    return ((access_count > 0) & weapon_access & (location_count > 0)) * jrand.uniform(subkey, (), minval=0, maxval=gathering_size), location_count, weapon_access, access_count
-
-def sample_event_no_selection(walk_radius, population_density, arm_density, atrisk_gathering_rate, rng_key):
-    rng_key, subkey = jrand.split(rng_key)
-    population_grid = jnp.full((30, 30), population_density)
-    access_count = jrand.poisson(subkey, lam=arm_density * population_grid.size)
-    flat_pop_grid = population_grid.flatten()
-    probabilities = flat_pop_grid / jnp.sum(flat_pop_grid)
-    rng_key, subkey = jrand.split(rng_key)
-
-    max_access = 250
-    access_points = jrand.choice(subkey, population_grid.size, (max_access,), p=probabilities)
-    point_mask = jnp.arange(max_access) < access_count
-    access_grid = jnp.zeros_like(population_grid)
-    access_grid = access_grid.at[jnp.unravel_index(access_points, population_grid.shape)].set(point_mask)
-
-    rng_key, subkey = jrand.split(rng_key)
-    random_walk = jrand.randint(subkey, (100, 2), -1, 2)
-    random_walk = jnp.cumsum(random_walk, axis=0) % population_grid.shape[0]
-    walk_mask = jnp.arange(100) < walk_radius
-    
-    weapon_access = jnp.any(access_grid[random_walk[:, 0], random_walk[:, 1]]*walk_mask)
-
-    walk_grid = jnp.zeros_like(population_grid)
-    walk_grid = walk_grid.at[random_walk[:, 0], random_walk[:, 1]].set(walk_mask)
-    population_encounters = jnp.sum(walk_grid * population_grid)
-    rng_key, subkey = jrand.split(rng_key)
-
-    location_count = jrand.poisson(subkey, lam=population_encounters * atrisk_gathering_rate)
-    rng_key, subkey = jrand.split(rng_key)
-    gathering_size = jrand.weibull_min(subkey, 2.0, 0.4)
-    rng_key, subkey = jrand.split(rng_key)
-    return ((access_count > 0) & weapon_access & (location_count > 0)) * jrand.uniform(subkey, (), minval=0, maxval=gathering_size)
-
-def sample_event_mixed_selection(walk_radius, population_density, arm_density, atrisk_gathering_rate, mix_rate, rng_key):
-    rng_key, subkey = jrand.split(rng_key)
-    population_grid = jnp.full((30, 30), population_density)
-    access_count = jrand.poisson(subkey, lam=arm_density * population_grid.size)
-    flat_pop_grid = population_grid.flatten()
-    probabilities = flat_pop_grid / jnp.sum(flat_pop_grid)
-    rng_key, subkey = jrand.split(rng_key)
-
-    max_access = 250
-    access_points = jrand.choice(subkey, population_grid.size, (max_access,), p=probabilities)
-    point_mask = jnp.arange(max_access) < access_count
-    access_grid = jnp.zeros_like(population_grid)
-    access_grid = access_grid.at[jnp.unravel_index(access_points, population_grid.shape)].set(point_mask)
-
-    rng_key, subkey = jrand.split(rng_key)
-    random_walk = jrand.randint(subkey, (100, 2), -1, 2)
-    random_walk = jnp.cumsum(random_walk, axis=0) % population_grid.shape[0]
-    walk_mask = jnp.arange(100) < walk_radius
-    
-    weapon_access = jnp.any(access_grid[random_walk[:, 0], random_walk[:, 1]]*walk_mask)
-
-    walk_grid = jnp.zeros_like(population_grid)
-    walk_grid = walk_grid.at[random_walk[:, 0], random_walk[:, 1]].set(walk_mask)
-    population_encounters = jnp.sum(walk_grid * population_grid)
-    rng_key, subkey = jrand.split(rng_key)
-
-    max_location = 250
-    location_count = jrand.poisson(subkey, lam=population_encounters * atrisk_gathering_rate)
-    location_mask = jnp.arange(max_location) < location_count
-    rng_key, subkey = jrand.split(rng_key)
-    loc_gathering_size = jrand.weibull_min(subkey, 2.0, 0.4, (max_location,))
-    max_gathering_size = jnp.max(loc_gathering_size*location_mask, initial=0)
-    sample_gathering_size = jrand.weibull_min(subkey, 2.0, 0.4)
-    sample_mask = jrand.uniform(subkey, ()) < mix_rate
-    gathering_size = jnp.where(sample_mask, sample_gathering_size, max_gathering_size)
-    rng_key, subkey = jrand.split(rng_key)
-    return ((access_count > 0) & weapon_access & (location_count > 0)) * jrand.uniform(subkey, (), minval=0, maxval=gathering_size)
-
-
-def sample_event_big(walk_radius, population_density, arm_density, atrisk_gathering_rate, mix_rate, scale_factor, decay_rate, rng_key):
-    rng_key, subkey = jrand.split(rng_key)
-    population_grid = jnp.full((30, 30), population_density)
-    access_count = jrand.poisson(subkey, lam=arm_density * population_grid.size)
-    flat_pop_grid = population_grid.flatten()
-    probabilities = flat_pop_grid / jnp.sum(flat_pop_grid)
-    rng_key, subkey = jrand.split(rng_key)
-
-    max_access = 250
-    access_points = jrand.choice(subkey, population_grid.size, (max_access,), p=probabilities)
-    point_mask = jnp.arange(max_access) < access_count
-    access_grid = jnp.zeros_like(population_grid)
-    access_grid = access_grid.at[jnp.unravel_index(access_points, population_grid.shape)].set(point_mask)
-
-    rng_key, subkey = jrand.split(rng_key)
-    random_walk = jrand.randint(subkey, (100, 2), -1, 2)
-    random_walk = jnp.cumsum(random_walk, axis=0) % population_grid.shape[0]
-    walk_mask = jnp.arange(100) < walk_radius
-    
-    weapon_access = jnp.any(access_grid[random_walk[:, 0], random_walk[:, 1]]*walk_mask)
-
-    walk_grid = jnp.zeros_like(population_grid)
-    walk_grid = walk_grid.at[random_walk[:, 0], random_walk[:, 1]].set(walk_mask)
-    population_encounters = jnp.sum(walk_grid * population_grid)
-    rng_key, subkey = jrand.split(rng_key)
-
-    max_location = 250
-    location_count = jrand.poisson(subkey, lam=population_encounters * atrisk_gathering_rate)
-    location_mask = jnp.arange(max_location) < location_count
-    rng_key, subkey = jrand.split(rng_key)
-    loc_gathering_size = jrand.weibull_min(subkey, scale_factor, decay_rate, (max_location,))
-    max_gathering_size = jnp.max(loc_gathering_size*location_mask, initial=0)
-    sample_gathering_size = jrand.weibull_min(subkey, scale_factor, decay_rate)
-    sample_mask = jrand.uniform(subkey, ()) < mix_rate
-    gathering_size = jnp.where(sample_mask, sample_gathering_size, max_gathering_size)
-    rng_key, subkey = jrand.split(rng_key)
-    return ((access_count > 0) & weapon_access & (location_count > 0)) * jrand.uniform(subkey, (), minval=0, maxval=gathering_size)
 
 from gvabm.param_distr import CityParams, ParamsType, GeneralParams, MixedGeneralParams, BigGeneralParams
 def tile_param_tup(param_list, batch_size):

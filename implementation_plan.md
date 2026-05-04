@@ -50,7 +50,7 @@ python scripts/run_vbmc.py --model sample_select --proxy suicide --gpu 2
 
 ## Task B: High-Firearm Availability Sensitivity (WAIC Sweep)
 
-**What it is:** The `0.10` per-encounter probability of a high-lethality weapon is hard-coded. Vary it: 0.05, 0.10, 0.15, 0.20, 0.25, 0.30.
+**What it is:** The `0.10` per-encounter probability of a high-lethality weapon is hard-coded. Vary it to 0.05, 0.20. 
 
 **Key file:** `gvabm/abm_event.py`
 
@@ -88,7 +88,7 @@ def make_event_func(high_weapon_prob=0.10):
 New file: `scripts/sensitivity_high_weapon.py`
 
 ```python
-SWEEP_VALUES = [0.05, 0.10, 0.15, 0.20, 0.25, 0.30]
+SWEEP_VALUES = [0.05, 0.20]
 
 # Load posterior mean from nooptstate-v3
 posterior_mean = load_posterior_mean('models/nooptstate-v3/')
