@@ -27,6 +27,8 @@ def compute_sweep_waic(
     num_sim_samples: int = 10000,
     rng_seed: int = 42,
     model_dir: str = 'models/nooptstate-v3/',
+    city_data=None,
+    weights=None,
 ):
     """
     Evaluate WAIC for sample_func using posterior samples from model_dir.
@@ -48,11 +50,22 @@ def compute_sweep_waic(
         Seed for reproducibility.
     model_dir : str
         Directory containing vp.pkl.
+    city_data : array-like or None
+        City dataset to evaluate on.  If None, uses the default
+        subsampled_city_data loaded from gvabm.city_data.
+    weights : array-like or None
+        Per-city importance weights matching city_data.  If None, uses
+        the default subsample_weights from gvabm.city_data.
 
     Returns
     -------
     (waic, waic_se) : tuple of float
     """
+    if city_data is None:
+        city_data = subsampled_city_data
+    if weights is None:
+        weights = subsample_weights
+
     rng_key = jrand.PRNGKey(rng_seed)
     posterior_normalized = load_posterior_samples(model_dir, n_samples=n_posterior_samples)
 
@@ -62,7 +75,7 @@ def compute_sweep_waic(
         params = param_distr.transform_sample(jnp.array(s))
         params = param_distr.to_data(np.array(params))
         city_lls = eval_ds(
-            subsampled_city_data, params, timespan=10, rng_key=subkey,
+            city_data, params, timespan=10, rng_key=subkey,
             num_samples=num_sim_samples, sample_func=sample_func,
         )
         ll_columns.append(city_lls[:, 0])  # total ll per city
@@ -71,4 +84,4 @@ def compute_sweep_waic(
 
     # ll_mat shape: (n_cities, n_posterior_samples, 1) — R=1 replicate per draw
     ll_mat = np.stack(ll_columns, axis=1)[:, :, np.newaxis]
-    return WAIC_metric(ll_mat, subsample_weights)
+    return WAIC_metric(ll_mat, weights)

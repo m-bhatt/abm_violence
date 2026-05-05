@@ -46,6 +46,14 @@ SWEEPS = [
         'darkorange',
     ),
     (
+        'D: FFL buffer radius',
+        'models/sensitivity_ffl_radius_results.json',
+        'ffl_radius_miles',
+        'FFL buffer radius (miles)',
+        25,
+        'teal',
+    ),
+    (
         'F: Severity scale',
         'models/sensitivity_severity_results.json',
         'severity_scale',
